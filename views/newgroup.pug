@@ -1,0 +1,14 @@
+extends layout
+
+block layout-content
+	a(href="/groups")
+		div.NavButton back
+	div.View
+		h1.Banner Groups
+		div.Form
+			form(method="post")
+				label(for="group_name") New Group Name: 
+				input(id="group_name" required="required" type="text" name="group_name")
+				input(type="submit" value="Create")
+	div.View
+
