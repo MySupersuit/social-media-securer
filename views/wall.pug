@@ -1,5 +1,26 @@
 extends layout
 
 block layout-content
+	a(href="/")
+		div.NavButton back
 	div.View
 		h1.Banner Wall
+		label(for="composePost") Compose Post
+		form(action="" method="post")
+			textarea(name="wall_post" rows="7" cols="70" placeholder="Enter your message!" style="resize:none")
+			select(name="groupdropdown" id="")
+				each group in groups
+					option=group.name
+			select(name="memberdropdown" id="")
+				each user in users
+					option=user
+			input(type="submit")
+	div.View
+		h1.Banner Posts
+		if !posts[0]
+			p No posts yet!
+		else
+			each post in posts
+				h3 Content
+				p=post.content
+				h4 Posted to group #{post.group} by #{post.author}

@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "socalmedia-34651",
+  "private_key_id": "ce0da1169c6c90f5ea5ce2dd0bceeece8b0eac54",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDLkw+m2DNUFXAG\nGvOtSR2nuIg4AwbIlQ7yWsymvvBcL9ecVVG6jwgZpQrw5myivqr1GA7IK3vqepX4\nPMe8ZHKVJbKclps2eUUSHSlTIGFebEYMvnTjGtvT59Y58Y6Z1mkgF2vDnXuUs3wT\nsosnp6rDy7rlXagi7pQ4t2+3X3fErjrL5zJ4GXnvoglPJ+5IqsZ48YmgybGFhByC\nlechJ6JflmEaHvq27bXQJWVMjB44SIXFOjw6opoJEMUOOUAHlBOqHBpfae8LZsew\nJKP8ECfD/5lxd3CT2CMI5LfH90QNaOIn/EYcYc3gKzeqRfoa+Wz+OwREEIywF4ge\n5V6bzOyHAgMBAAECggEAUF6fW8XYQdZy0x453MxUZl5efQqI15CthXXefOg9+Y8z\nxrcSXJ5SWtmDP8cg1YGD+d5FG7a7Jb++zHGmg1R+vi5TXSnCXlezMqsLoRNUDZSe\ndTKN8AkvB3Jsa5TXsRlqiG5mr6RRYUwY7Kfc80tpCgK5Jwt6MUxSfS/CbblFjgJs\ntHo6CCTe2tYG9v0oCpcx444tVVE46aiVwUly5z0wTrt1uNSlDrypsiWIML5Dbm1H\nIe3J5AQpRDdzv/OBXjH9Y6peufigGiqfW9vT6Ab2Tk/svR91+j6elDRihfYwC5WD\n61UAaQknKLG6myWSDTZdFlQ8317YYyweiQ18qhzfPQKBgQDtZaKtJywFkdzIrRZn\nsTyf3L+GTin6+QB6kpgYp3fkUU8k+zUBmbTDXWXVTVDU9ERqZWXuRosKXtLtq2Dj\nMfquGJQg4HR09sYnJBUGLN3cJTcWLBqfiGmNntbJ5wcAEwAKsrL64VsdW8XDKl24\nttQ7kBXVE2GPK6acKykQ+WSCpQKBgQDbhutkk8JwaprF9qYMdry4u0XOv93Aws8k\nR/1AJiXnkChy/x/6LdAgqVKtajqbUTK35mcCTHekUg+7+ZULLL6eRWlqyYOMXgaq\nrxrQbNBZNljBmDmtDpytjt8WXh011ia7nft5DPj21mGsKAEtXMKRmdNJiuSCzFpO\nZMcTdHkmuwKBgBfg4TwJdKQax9pnjplfenmZ+qnHsvFLmoC5vhK8xZJxm0RdADfo\n/gWon1WVMUw6RaduC5KsBdBFOXIuitBPdqeMUVn9ObmKGORW/MZiPO6nz6KrTQI+\n9l8IWxJz6oBXaOmqj9YsVL3fPUUkPckWmsJi+88y491Cxr9ul/LdIv8BAoGAHmiD\n9ryY9GVv5vgRbCyOW7BlLQxatTbG5qmqJNaj7X2EfNlmHot2BvAtaaQLVjRbKCoc\nHq9k6zgKwekCgjfCd735qjcbp7fmiIIU3sYT3ievB7IEWzpo7Yma0UhcF3cAioCJ\nsuzfF6H+iZBJCXWN5gk+wTMiEBQqdi1zffhmR70CgYEAhaS9Neb6AC8mooMp87qx\njChd/7ZO2p+Sl1DkXWWSLKWHxuuFLIcAlr0FByySS9aE7Rf5AAWnh/SaOgUQRG1X\nlnsRckr8Z5dDvQty/nvey5tR7sORg1mgd/aY+Vslu2zIyxqx2Q44T1myhG/O7nBH\ngAvvMASIO1M8t4orlOSN56k=\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-2g21b@socalmedia-34651.iam.gserviceaccount.com",
+  "client_id": "106453620522472762335",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-2g21b%40socalmedia-34651.iam.gserviceaccount.com"
+}

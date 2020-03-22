@@ -2,7 +2,8 @@
 * Globals
  */
 groups = [];
-users = ['Tom','Jack','John','Yanika'];
+users = ['Tom','Jack','John','Yanika', 'YOU'];
+posts = [];
 
 /**
  * Required External Modules
@@ -11,6 +12,41 @@ users = ['Tom','Jack','John','Yanika'];
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
+
+
+// var firebaseConfig = {
+//     apiKey: "AIzaSyAlCbMU2eptW5u44kmUBmG4fz-PlilwUrY",
+//     authDomain: "socalmedia-34651.firebaseapp.com",
+//     databaseURL: "https://socalmedia-34651.firebaseio.com",
+//     projectId: "socalmedia-34651",
+//     storageBucket: "socalmedia-34651.appspot.com",
+//     messagingSenderId: "313379892483",
+//     appId: "1:313379892483:web:8a4b5a5911fb4cf24d8d36",
+//     measurementId: "G-S04MVK9BD3"
+// };
+
+const firebase = require('firebase-admin');
+var serviceAccount = require("./firebase.json");
+
+firebase.initializeApp({
+	credential: firebase.credential.cert(serviceAccount),
+	databaseURL: "https://socalmedia-34651.firebaseio.com"
+});;
+
+var db = firebase.database();
+var ref = db.ref("restricted_access/secret_document");
+
+// var usersRef = ref.child("users");
+// usersRef.set({
+// 	alanisawesome: {
+// 		date_of_birth: "June 23, 1912",
+// 		full_name: "Alan Turing"
+// 	},
+// 	gracehop: {
+// 		date_of_birth: "December 9, 1906",
+// 		full_name: "Grace Hopper"
+// 	}
+// });
 
 /**
  * App Variables
@@ -37,19 +73,15 @@ app.get("/", (req, res) => {
 });
 
 app.get("/groups", (req, res) => {
-	res.render("groups");
+	res.render("groups", {title:"Groups"});
 });
 
 app.get("/wall", (req, res) => {
-	res.render("wall");
-});
-
-app.get("/compose", (req, res) => {
-	res.render("compose");
+	res.render("wall", {title:"Wall", groups:groups, user:users, posts:posts});
 });
 
 app.get("/newgroup", (req, res) => {
-	res.render("newgroup");
+	res.render("newgroup", {title:"New Group"});
 });
 
 app.post("/newgroup", (req, res) => {
@@ -63,9 +95,6 @@ app.post("/viewgroups", (req, res) => {
 	var removeGroupButton = req.body.remove;
 	var addMemberButtonText = req.body.addMember;
 	var removeMemberButtonText = req.body.removeMember;
-	console.log(removeGroupButton);
-	console.log(addMemberButtonText);
-	console.log(removeMemberButtonText);
 
 	if (removeGroupButton) {
 		removeGroup(removeGroupButton);
@@ -80,9 +109,33 @@ app.post("/viewgroups", (req, res) => {
 });
 
 app.get("/viewgroups", (req, res) => {
-	console.log("passing");
-	console.log(groups);
-	res.render("viewgroups", {groups:groups, users:users});
+	res.render("viewgroups", {title:"View Groups", groups:groups, users:users});
+});
+
+app.post("/wall", (req, res) => {
+	post_content = req.body.wall_post;
+	toGroup = req.body.groupdropdown;
+	author = req.body.memberdropdown;
+
+	if (toGroup != "") {
+
+		if (inGroup(author,toGroup)) {
+
+			var newPost = {
+				content: post_content,
+				group: toGroup,
+				author: author
+			};
+
+			posts.unshift(newPost);
+			console.log(posts);
+			console.log("posted");
+			console.log(post_content + " " + toGroup + " " + author);
+		} else {
+			console.log("not posted")
+		}
+	}
+	res.render("wall");
 });
 
 
@@ -106,10 +159,9 @@ function addMemberToGroup(member, buttonText) {
 	members = group.members;
 	if (!members.includes(member)) {
 		members.push(member);
-		console.log("pushed")
 	}
-	console.log(groups);
 }
+
 
 function removeMemberFromGroup(member, buttonText) {
 	groupName = buttonText.substr(19, buttonText.length+1);
@@ -126,10 +178,8 @@ function removeMemberFromGroup(member, buttonText) {
 			}
 		}
 	}
-
-
-	console.log(groups);
 }
+
 
 function addGroup(groupName) {
 	var newGroup = {
@@ -148,8 +198,8 @@ function addGroup(groupName) {
 	}
 }
 
-function removeGroup(buttonName) {
 
+function removeGroup(buttonName) {
 	// 7 IS LENGTH OF 'REMOVE'
 	var name = buttonName.substr(7,buttonName.length+1);
 
@@ -159,6 +209,7 @@ function removeGroup(buttonName) {
 	}
 }
 
+
 function getGroupIndex(groupName) {
 	for (i = 0; i < groups.length; i++) {
 		if (groups[i].name == groupName) {
@@ -166,4 +217,12 @@ function getGroupIndex(groupName) {
 		}
 	}
 	return -1;
+}
+
+function inGroup(author, groupName) {
+	group = groups[getGroupIndex(groupName)];
+	if (group.members.includes(author)) {
+		return true;
+	} 
+	return false;
 }
