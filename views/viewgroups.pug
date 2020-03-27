@@ -1,25 +1,26 @@
 extends layout
 
 block layout-content
-
 	a(href="/groups")
 		div.NavButton back
 	div.View
 		h1.Banner View Groups
 		#groups
-		ul
-			if !groups[0]
-				p No groups yet!
-			else 
-				each group in groups
-					p=group.name
-					each member in group.members
-						p=member
-					form(action="" method="post")
-						input(type="submit" name="remove" value="Remove "+group.name)
-					form(action="" method="post")
-						select(name="memberdropdown" id="")
-							each user in users
-								option=user
-							input(type="submit", name="addMember" value="Add member to " + group.name)
-							input(type="submit", name="removeMember" value="Remove member from " + group.name)
+			ul
+				if !groups[0]
+					p No groups yet!
+				else 
+					each group in groups
+						h3=group.name
+						h4 Members:
+						each member in group.members
+							li=member
+						br
+						form(action="" method="post")
+							input(type="submit" name="remove" value="Remove "+group.name)
+						form(action="" method="post")
+							select(name="memberdropdown" id="")
+								each user in users
+									option=user
+								input(type="submit", name="addMember" value="Add member to " + group.name)
+								input(type="submit", name="removeMember" value="Remove member from " + group.name)

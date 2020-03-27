@@ -1,7 +1,14 @@
 /**
 * Globals
  */
-groups = [];
+
+groups = [{
+	name: "Example",
+	members: [
+		"Tom", "Jack", "YOU"
+	],
+	passcode: "slkd9jf3sd"
+}];
 users = ['Tom','Jack','John','Yanika', 'YOU'];
 posts = [];
 
@@ -12,18 +19,12 @@ posts = [];
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
+const crypt = require('crypto-js');
 
+// var encrypt = crypt.AES.encrypt("Message", "Passphrase");
+// var dec = crypt.AES.decrypt(encrypt, "Passphrase");
+// console.log(dec.toString(crypt.enc.Utf8));
 
-// var firebaseConfig = {
-//     apiKey: "AIzaSyAlCbMU2eptW5u44kmUBmG4fz-PlilwUrY",
-//     authDomain: "socalmedia-34651.firebaseapp.com",
-//     databaseURL: "https://socalmedia-34651.firebaseio.com",
-//     projectId: "socalmedia-34651",
-//     storageBucket: "socalmedia-34651.appspot.com",
-//     messagingSenderId: "313379892483",
-//     appId: "1:313379892483:web:8a4b5a5911fb4cf24d8d36",
-//     measurementId: "G-S04MVK9BD3"
-// };
 
 const firebase = require('firebase-admin');
 var serviceAccount = require("./firebase.json");
@@ -35,18 +36,6 @@ firebase.initializeApp({
 
 var db = firebase.database();
 var ref = db.ref("restricted_access/secret_document");
-
-// var usersRef = ref.child("users");
-// usersRef.set({
-// 	alanisawesome: {
-// 		date_of_birth: "June 23, 1912",
-// 		full_name: "Alan Turing"
-// 	},
-// 	gracehop: {
-// 		date_of_birth: "December 9, 1906",
-// 		full_name: "Grace Hopper"
-// 	}
-// });
 
 /**
  * App Variables
@@ -113,31 +102,24 @@ app.get("/viewgroups", (req, res) => {
 });
 
 app.post("/wall", (req, res) => {
+	decrypt_content = req.body.decrypt;
+	if (decrypt_content) {
+		decryptMessage(decrypt_content);
+	}
+	encrypt_content = req.body.encrypt;
+	if (encrypt_content) {
+		encryptMessage(encrypt_content)
+	}
 	post_content = req.body.wall_post;
 	toGroup = req.body.groupdropdown;
 	author = req.body.memberdropdown;
-
-	if (toGroup != "") {
-
-		if (inGroup(author,toGroup)) {
-
-			var newPost = {
-				content: post_content,
-				group: toGroup,
-				author: author
-			};
-
-			posts.unshift(newPost);
-			console.log(posts);
-			console.log("posted");
-			console.log(post_content + " " + toGroup + " " + author);
-		} else {
-			console.log("not posted")
-		}
+	
+	if (toGroup) {
+		createPost(post_content,toGroup,author);
 	}
-	res.render("wall");
-});
 
+	res.render("wall", {title:"Wall"});
+});
 
 /**
  * Server Activation
@@ -180,11 +162,41 @@ function removeMemberFromGroup(member, buttonText) {
 	}
 }
 
+function createPost(content, toGroup, author) {
+	if (inGroup(author, toGroup)) {
+		group = groups[getGroupIndex(toGroup)];
+		encrypt_content = crypt.AES.encrypt(content, group.passcode);
+
+		var newPost = {
+			content: {
+				message: encrypt_content,
+				encrypted: true,
+			},
+			group: toGroup,
+			author: author
+		};
+
+		posts.unshift(newPost);
+		console.log("posted");
+	} else {
+		console.log("not posted");
+	}
+}
+
+
+
+function createPasscode() {
+	s = Math.random().toString(36).substring(2, 15) + 
+	Math.random().toString(36).substring(2, 15);
+	return s;
+}
 
 function addGroup(groupName) {
+	newPasscode = createPasscode();
 	var newGroup = {
 		name: groupName,
-		members: []
+		members: [],
+		passcode: newPasscode
 	};
 	let addGroup = true;
 	for (i = 0; i < groups.length; i++) {
@@ -211,7 +223,7 @@ function removeGroup(buttonName) {
 
 
 function getGroupIndex(groupName) {
-	for (i = 0; i < groups.length; i++) {
+	for (let i = 0; i < groups.length; i++) {
 		if (groups[i].name == groupName) {
 			return i;
 		}
@@ -225,4 +237,38 @@ function inGroup(author, groupName) {
 		return true;
 	} 
 	return false;
+}
+
+function decryptMessage(content) {
+	console.log("decrypting");
+	var group;
+	for (let i = 0; i < posts.length; i++) {
+		if (posts[i].content.message == content
+			&& posts[i].content.encrypted == true) {
+			groupName = posts[i].group;
+			group = groups[getGroupIndex(groupName)];
+			if (group.members.includes("YOU")) {
+				var decrypt = crypt.AES.decrypt(content, group.passcode);
+				posts[i].content.message = decrypt.toString(crypt.enc.Utf8);
+				posts[i].content.encrypted = false;
+			}
+		}
+	}
+}
+
+function encryptMessage(content) {
+	console.log("encrypting");
+	var group;
+	for (let i = 0; i < posts.length; i++) {
+		if (posts[i].content.message == content
+			&& posts[i].content.encrypted == false) {
+			groupName = posts[i].group;
+			group = groups[getGroupIndex(groupName)];
+			if (group.members.includes("YOU")) {
+				var encrypt = crypt.AES.encrypt(content, group.passcode);
+				posts[i].content.message = encrypt.toString();
+				posts[i].content.encrypted = true;
+			}
+		}
+	}
 }
