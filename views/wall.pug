@@ -7,7 +7,7 @@ block layout-content
 		h1.Banner Wall
 		label(for="composePost") Compose Post
 		form(action="" method="post")
-			textarea(name="wall_post" rows="7" cols="70" placeholder="Enter your message!" style="resize:none")
+			textarea(name="wall_post" rows="7" cols="70" placeholder="Enter your message!" style="resize:none" required="required")
 			select(name="groupdropdown" id="")
 				each group in groups
 					option=group.name
@@ -22,5 +22,22 @@ block layout-content
 		else
 			each post in posts
 				h3 Content
-				p=post.content
+				p=post.content.message
+				form(action="" method="post")
+					button(name="decrypt" type="submit" value="" + post.content.message) Decrypt
+				form(action="" method="post")
+					button(name="encrypt" type="submit" value="" + post.content.message) Encrypt
 				h4 Posted to group #{post.group} by #{post.author}
+	script.
+		window.onload = function() {
+			pos = localStorage.getItem('scrollPosition');
+			if (pos !== null) {
+					window.scrollTo(0, pos);
+			}
+		}
+
+		window.addEventListener('scroll', function() {
+			localStorage.setItem('scrollPosition', window.scrollY);
+		}, false);
+
+
