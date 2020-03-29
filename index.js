@@ -3,13 +3,13 @@
  */
 
 groups = [{
-	name: "Example",
+	name: "Radiohead",
 	members: [
-		"Tom", "Jack", "YOU"
+		"Thom", "Jonny","Colin","Phil", "Ed", "YOU"
 	],
 	passcode: "slkd9jf3sd"
 }];
-users = ['Tom','Jack','John','Yanika', 'YOU'];
+users = ['Thom','Jonny','Colin','Phil','Ed', 'Yanika', 'YOU'];
 posts = [];
 
 /**
@@ -20,22 +20,6 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const crypt = require('crypto-js');
-
-// var encrypt = crypt.AES.encrypt("Message", "Passphrase");
-// var dec = crypt.AES.decrypt(encrypt, "Passphrase");
-// console.log(dec.toString(crypt.enc.Utf8));
-
-
-const firebase = require('firebase-admin');
-var serviceAccount = require("./firebase.json");
-
-firebase.initializeApp({
-	credential: firebase.credential.cert(serviceAccount),
-	databaseURL: "https://socalmedia-34651.firebaseio.com"
-});;
-
-var db = firebase.database();
-var ref = db.ref("restricted_access/secret_document");
 
 /**
  * App Variables
@@ -70,14 +54,20 @@ app.get("/wall", (req, res) => {
 });
 
 app.get("/newgroup", (req, res) => {
-	res.render("newgroup", {title:"New Group"});
+	res.render("newgroup", {title:"New Group", msg:""});
 });
 
 app.post("/newgroup", (req, res) => {
 	var name = req.body.group_name;
-	addGroup(name);
+	e = addGroup(name);
+	msg = "";
+	if (e == -1) {
+		msg = "Error: group already exists"
+	} else {
+		msg = "Group '"+name+"' created.";
+	}
 	
-	res.render("newgroup");
+	res.render("newgroup", {title:"New Group", msg:msg});
 });
 
 app.post("/viewgroups", (req, res) => {
@@ -102,6 +92,11 @@ app.get("/viewgroups", (req, res) => {
 });
 
 app.post("/wall", (req, res) => {
+	delete_content = req.body.delete;
+	if (delete_content) {
+		deleteMessage(delete_content);
+	}
+
 	decrypt_content = req.body.decrypt;
 	if (decrypt_content) {
 		decryptMessage(decrypt_content);
@@ -162,16 +157,27 @@ function removeMemberFromGroup(member, buttonText) {
 	}
 }
 
+function getTimeString() {
+	var today = new Date();
+	var date = today.getFullYear()+'-'+(today.getMonth()+1)+
+		'-'+today.getDate();
+	var time = today.getHours()+":"+today.getMinutes()+":"+
+			today.getSeconds();
+			
+	return date+" at "+time;
+}
+
 function createPost(content, toGroup, author) {
 	if (inGroup(author, toGroup)) {
 		group = groups[getGroupIndex(toGroup)];
 		encrypt_content = crypt.AES.encrypt(content, group.passcode);
-
+		time = getTimeString();
 		var newPost = {
 			content: {
 				message: encrypt_content,
 				encrypted: true,
 			},
+			time: time,
 			group: toGroup,
 			author: author
 		};
@@ -191,7 +197,21 @@ function createPasscode() {
 	return s;
 }
 
+function isUniqueGroupName(name) {
+	name = name.trim();
+	for (let i = 0; i < groups.length; i++) {
+		if (groups[i].name.toLowerCase() == name.toLowerCase()) {
+			return false;
+		}
+	}
+	return true;
+}
+
 function addGroup(groupName) {
+	if(!isUniqueGroupName(groupName)) {
+		return -1;
+	}
+
 	newPasscode = createPasscode();
 	var newGroup = {
 		name: groupName,
@@ -208,6 +228,7 @@ function addGroup(groupName) {
 	if (addGroup) {
 		groups.push(newGroup);
 	}
+	return 0;
 }
 
 
@@ -239,12 +260,34 @@ function inGroup(author, groupName) {
 	return false;
 }
 
+function deleteMessage(content) {
+	var splits = content.split('|-|');
+	msg = splits[0];
+	time = splits[1];
+
+	for (let i = 0; i < posts.length; i++) {
+		if (posts[i].content.message == msg &&
+			posts[i].time == time) {
+			groupName = posts[i].group;
+			group = groups[getGroupIndex(groupName)];
+			if (group.members.includes("YOU")) {
+				posts.splice(i, 1);
+			}
+		}
+	}
+}
+
 function decryptMessage(content) {
+	var splits = content.split('|-|');
+	msg = splits[0];
+	time = splits[1];
+
 	console.log("decrypting");
 	var group;
 	for (let i = 0; i < posts.length; i++) {
-		if (posts[i].content.message == content
-			&& posts[i].content.encrypted == true) {
+		if (posts[i].content.message == msg &&
+			posts[i].time == time &&
+			posts[i].content.encrypted == true) {
 			groupName = posts[i].group;
 			group = groups[getGroupIndex(groupName)];
 			if (group.members.includes("YOU")) {
@@ -257,15 +300,20 @@ function decryptMessage(content) {
 }
 
 function encryptMessage(content) {
+	var splits = content.split('|-|');
+	msg = splits[0];
+	time = splits[1];
+
 	console.log("encrypting");
 	var group;
 	for (let i = 0; i < posts.length; i++) {
-		if (posts[i].content.message == content
+		if (posts[i].content.message == msg
+			&& posts[i].time == time
 			&& posts[i].content.encrypted == false) {
 			groupName = posts[i].group;
 			group = groups[getGroupIndex(groupName)];
 			if (group.members.includes("YOU")) {
-				var encrypt = crypt.AES.encrypt(content, group.passcode);
+				var encrypt = crypt.AES.encrypt(msg, group.passcode);
 				posts[i].content.message = encrypt.toString();
 				posts[i].content.encrypted = true;
 			}

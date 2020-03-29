@@ -88,13 +88,24 @@ a {
   font-family: var(--core-font);
 }
 
+.Post {
+  margin-top: 20px;
+  width: inherit;
+  word-wrap: break-word; 
+}
+
+.PostEntry {
+  margin-top: 20px;
+
+}
+
 .UserView{
-	background: url("https://cdn.auth0.com/blog/whatabyte/patio.png") left bottom;
+	background: url("whitewall.jpg") left bottom;
 	background-size: cover;
 }
 
 .Banner {
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -103,7 +114,6 @@ a {
 
   border-radius: 5px;
 
-  overflow: hidden;
   background: white;
   padding: 15px;
 
@@ -146,7 +156,7 @@ a {
 
   height: 55px;
   width: 150px;
-
+  margin: 10px;
   background: var(--highlight);
 
   border-radius: 30px;
@@ -160,8 +170,30 @@ a {
   border-bottom: var(--ui-shawdow-border);
   box-shadow: var(--ui-shawdow);
 }
-/*
+
+.InteractButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  height: 55px;
+  width: 150px;
+  margin: 10px;
+  background: var(--highlight);
+
+  border-radius: 30px;
+
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+
+  text-transform: capitalize;
+
+  border-bottom: var(--ui-shawdow-border);
+  box-shadow: var(--ui-shawdow);
+}
+
 .WelcomeView {
 	background: url("food.jpg"); left bottom;
 	background-size: cover;
-}*/
+}

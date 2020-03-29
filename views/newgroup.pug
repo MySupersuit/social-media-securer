@@ -2,13 +2,19 @@ extends layout
 
 block layout-content
 	a(href="/groups")
-		div.NavButton back
+		div.NavButton Back
 	div.View
 		h1.Banner Groups
+		
+		a(href="/viewgroups")
+			div.NavButton View Groups
+		
 		div.Form
 			form(method="post")
 				label(for="group_name") New Group Name: 
 				input(id="group_name" required="required" type="text" name="group_name" autocomplete="off")
 				input(type="submit" value="Create")
+		div.StatusMessage
+			h4 #{msg}
 	div.View
 

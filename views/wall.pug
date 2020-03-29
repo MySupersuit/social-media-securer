@@ -5,29 +5,35 @@ block layout-content
 		div.NavButton back
 	div.View
 		h1.Banner Wall
-		label(for="composePost") Compose Post
-		form(action="" method="post")
-			textarea(name="wall_post" rows="7" cols="70" placeholder="Enter your message!" style="resize:none" required="required")
-			select(name="groupdropdown" id="")
-				each group in groups
-					option=group.name
-			select(name="memberdropdown" id="")
-				each user in users
-					option=user
-			input(type="submit")
+		div.PostEntry
+			label(for="composePost") Compose Post
+			form(action="" method="post")
+				textarea(name="wall_post" rows="7" cols="70" placeholder="Enter your message!" style="resize:none" required="required")
+				select(name="groupdropdown" id="")
+					each group in groups
+						option=group.name
+				select(name="memberdropdown" id="")
+					each user in users
+						option=user
+				input(type="submit")
 	div.View
 		h1.Banner Posts
+		
 		if !posts[0]
 			p No posts yet!
 		else
 			each post in posts
-				h3 Content
-				p=post.content.message
-				form(action="" method="post")
-					button(name="decrypt" type="submit" value="" + post.content.message) Decrypt
-				form(action="" method="post")
-					button(name="encrypt" type="submit" value="" + post.content.message) Encrypt
-				h4 Posted to group #{post.group} by #{post.author}
+				div.Post
+					h3 Content
+					p=post.content.message
+					form(action="" method="post")
+						button(name="decrypt" type="submit" value="" + post.content.message+"|-|"+post.time) Decrypt
+					form(action="" method="post")
+						button(name="encrypt" type="submit" value="" + post.content.message+"|-|"+post.time) Encrypt
+					form(action="" method="post")
+						button(name="delete" type="submit" value=""+post.content.message+"|-|"+post.time) Delete
+					h4 Posted to group #{post.group} by #{post.author} on #{post.time}
+
 	script.
 		window.onload = function() {
 			pos = localStorage.getItem('scrollPosition');

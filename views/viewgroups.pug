@@ -1,10 +1,15 @@
 extends layout
 
 block layout-content
+
 	a(href="/groups")
-		div.NavButton back
+		div.NavButton Back
 	div.View
 		h1.Banner View Groups
+		
+		a(href="/newgroup")
+			div.NavButton New Group
+		
 		#groups
 			ul
 				if !groups[0]
@@ -16,6 +21,7 @@ block layout-content
 						each member in group.members
 							li=member
 						br
+							
 						form(action="" method="post")
 							input(type="submit" name="remove" value="Remove "+group.name)
 						form(action="" method="post")
