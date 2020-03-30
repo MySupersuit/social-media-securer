@@ -2,13 +2,15 @@
 * Globals
  */
 
-groups = [{
-	name: "Radiohead",
-	members: [
-		"Thom", "Jonny","Colin","Phil", "Ed", "YOU"
-	],
-	passcode: "slkd9jf3sd"
-}];
+groups = [
+// {
+// 	name: "Radiohead",
+// 	members: [
+// 		"Thom", "Jonny","Colin","Phil", "Ed", "YOU"
+// 	],
+// 	passcode: "slkd9jf3sd"
+// }
+];
 users = ['Thom','Jonny','Colin','Phil','Ed', 'Yanika', 'YOU'];
 posts = [];
 
@@ -152,6 +154,18 @@ function removeMemberFromGroup(member, buttonText) {
 			if (members[i] == member) {
 				members.splice(i, 1);
 				break;
+			}
+		}
+	}
+	// re-encrypt all messages from group the user just left
+	if (member == "YOU") { 
+		for (var i = 0; i < posts.length; i++) {
+			if (posts[i].group == groupName) {
+				if (posts[i].content.encrypted == false) {
+					encrypt_content = crypt.AES.encrypt(posts[i].content.message, group.passcode);
+					posts[i].content.message = encrypt_content;
+					posts[i].content.encrypted = true;
+				}
 			}
 		}
 	}

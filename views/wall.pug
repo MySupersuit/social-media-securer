@@ -10,9 +10,11 @@ block layout-content
 			form(action="" method="post")
 				textarea(name="wall_post" rows="7" cols="70" placeholder="Enter your message!" style="resize:none" required="required")
 				select(name="groupdropdown" id="")
+					option(value="" selected disabled hidden) Choose group
 					each group in groups
 						option=group.name
 				select(name="memberdropdown" id="")
+					option(value="" selected disabled hidden) Choose user
 					each user in users
 						option=user
 				input(type="submit")

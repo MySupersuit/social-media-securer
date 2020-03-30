@@ -26,6 +26,7 @@ block layout-content
 							input(type="submit" name="remove" value="Remove "+group.name)
 						form(action="" method="post")
 							select(name="memberdropdown" id="")
+								option(value="" selected disabled hidden) Choose user
 								each user in users
 									option=user
 								input(type="submit", name="addMember" value="Add member to " + group.name)
