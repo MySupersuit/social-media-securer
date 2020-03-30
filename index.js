@@ -1,5 +1,5 @@
 /**
-* Globals
+* Globals vars
  */
 
 groups = [];
@@ -7,7 +7,7 @@ users = ['Thom','Jonny','Colin','Phil','Ed', 'Yanika', 'YOU'];
 posts = [];
 
 /**
- * Required External Modules
+ * Modules used
  */
 
 const express = require('express');
@@ -16,14 +16,14 @@ const bodyParser = require('body-parser');
 const crypt = require('crypto-js');
 
 /**
- * App Variables
+ * Application vars
  */
 
 const app = express();
 const port = process.env.PORT || "8000";
 
 /**
- *  App Configuration
+ *  Configuring the app
  */
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
@@ -32,13 +32,14 @@ app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json())
 
 /**
- * Routes Definitions
+ * Routes
  */
 
 app.get("/", (req, res) => {
 	res.render("index", {title:"Home"});
 });
 
+// eg. GET request from to /groups renders that page
 app.get("/groups", (req, res) => {
 	res.render("groups", {title:"Groups"});
 });
@@ -51,6 +52,7 @@ app.get("/newgroup", (req, res) => {
 	res.render("newgroup", {title:"New Group", msg:""});
 });
 
+// eg. POST to /newgroup means a new group is being added
 app.post("/newgroup", (req, res) => {
 	var name = req.body.group_name;
 	e = addGroup(name);
@@ -111,18 +113,20 @@ app.post("/wall", (req, res) => {
 });
 
 /**
- * Server Activation
+ * Server Start
  */
 
 app.listen(port, () => {
 	console.log(`Listening to requests on http://localhost:${port}`);
 });
 
-/*
---------------------------
+/**
+ * Main helper functions 
 */
 
+// Adds a given member to a group
 function addMemberToGroup(member, buttonText) {
+	// get group name
 	groupName = buttonText.substr(14, buttonText.length+1);
 	console.log("adding " + member + " to " + groupName);
 	gIndex = getGroupIndex(groupName);
@@ -134,6 +138,7 @@ function addMemberToGroup(member, buttonText) {
 }
 
 
+// Removes a given member from a group
 function removeMemberFromGroup(member, buttonText) {
 	groupName = buttonText.substr(19, buttonText.length+1);
 	console.log("removing " + member + " from " + groupName);
@@ -141,6 +146,7 @@ function removeMemberFromGroup(member, buttonText) {
 	group = groups[gIndex];
 	members = group.members;
 	
+	//if member in group, remove
 	if (members.includes(member)) {
 		for (i = 0; i < members.length; i++) {
 			if (members[i] == member) {
@@ -149,7 +155,8 @@ function removeMemberFromGroup(member, buttonText) {
 			}
 		}
 	}
-	// re-encrypt all messages from group the user just left
+
+	// re-encrypt all messages from the group user just left
 	if (member == "YOU") { 
 		for (var i = 0; i < posts.length; i++) {
 			if (posts[i].group == groupName) {
@@ -164,6 +171,7 @@ function removeMemberFromGroup(member, buttonText) {
 }
 
 
+// get time and data for showing under post
 function getTimeString() {
 	var today = new Date();
 	var date = today.getFullYear()+'-'+(today.getMonth()+1)+
@@ -175,7 +183,9 @@ function getTimeString() {
 }
 
 
+// create post with content, group and author
 function createPost(content, toGroup, author) {
+	// ensure author is in group
 	if (inGroup(author, toGroup)) {
 		group = groups[getGroupIndex(toGroup)];
 		encrypt_content = crypt.AES.encrypt(content, group.passcode);
@@ -190,6 +200,8 @@ function createPost(content, toGroup, author) {
 			author: author
 		};
 
+		// add to front of posts array so most recent
+		// post is shown first on the Wall.
 		posts.unshift(newPost);
 		console.log("posted");
 	} else {
@@ -198,6 +210,7 @@ function createPost(content, toGroup, author) {
 }
 
 
+// create random string for use as AES key
 function createPasscode() {
 	s = Math.random().toString(36).substring(2, 15) + 
 	Math.random().toString(36).substring(2, 15);
@@ -216,7 +229,9 @@ function isUniqueGroupName(name) {
 }
 
 
+// add group to system
 function addGroup(groupName) {
+	// only add if name is unique
 	if(!isUniqueGroupName(groupName)) {
 		return -1;
 	}
@@ -241,7 +256,9 @@ function addGroup(groupName) {
 }
 
 
+// remove group
 function removeGroup(buttonName) {
+	// get group name from button
 	// 7 IS LENGTH OF 'REMOVE'
 	var name = buttonName.substr(7,buttonName.length+1);
 
@@ -252,6 +269,7 @@ function removeGroup(buttonName) {
 }
 
 
+// get index in groups array from group name
 function getGroupIndex(groupName) {
 	for (let i = 0; i < groups.length; i++) {
 		if (groups[i].name == groupName) {
@@ -262,6 +280,7 @@ function getGroupIndex(groupName) {
 }
 
 
+// is memnber/author of post in group
 function inGroup(author, groupName) {
 	group = groups[getGroupIndex(groupName)];
 	if (group.members.includes(author)) {
@@ -271,6 +290,7 @@ function inGroup(author, groupName) {
 }
 
 
+// delete post 
 function deleteMessage(content) {
 	var splits = content.split('|-|');
 	msg = splits[0];
@@ -289,6 +309,7 @@ function deleteMessage(content) {
 }
 
 
+// decrypt message given message and time of post
 function decryptMessage(content) {
 	var splits = content.split('|-|');
 	msg = splits[0];
@@ -312,6 +333,7 @@ function decryptMessage(content) {
 }
 
 
+// encrypt message given message and time of post 
 function encryptMessage(content) {
 	var splits = content.split('|-|');
 	msg = splits[0];
