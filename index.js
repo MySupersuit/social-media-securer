@@ -2,15 +2,7 @@
 * Globals
  */
 
-groups = [
-// {
-// 	name: "Radiohead",
-// 	members: [
-// 		"Thom", "Jonny","Colin","Phil", "Ed", "YOU"
-// 	],
-// 	passcode: "slkd9jf3sd"
-// }
-];
+groups = [];
 users = ['Thom','Jonny','Colin','Phil','Ed', 'Yanika', 'YOU'];
 posts = [];
 
@@ -171,6 +163,7 @@ function removeMemberFromGroup(member, buttonText) {
 	}
 }
 
+
 function getTimeString() {
 	var today = new Date();
 	var date = today.getFullYear()+'-'+(today.getMonth()+1)+
@@ -180,6 +173,7 @@ function getTimeString() {
 			
 	return date+" at "+time;
 }
+
 
 function createPost(content, toGroup, author) {
 	if (inGroup(author, toGroup)) {
@@ -204,12 +198,12 @@ function createPost(content, toGroup, author) {
 }
 
 
-
 function createPasscode() {
 	s = Math.random().toString(36).substring(2, 15) + 
 	Math.random().toString(36).substring(2, 15);
 	return s;
 }
+
 
 function isUniqueGroupName(name) {
 	name = name.trim();
@@ -220,6 +214,7 @@ function isUniqueGroupName(name) {
 	}
 	return true;
 }
+
 
 function addGroup(groupName) {
 	if(!isUniqueGroupName(groupName)) {
@@ -266,6 +261,7 @@ function getGroupIndex(groupName) {
 	return -1;
 }
 
+
 function inGroup(author, groupName) {
 	group = groups[getGroupIndex(groupName)];
 	if (group.members.includes(author)) {
@@ -273,6 +269,7 @@ function inGroup(author, groupName) {
 	} 
 	return false;
 }
+
 
 function deleteMessage(content) {
 	var splits = content.split('|-|');
@@ -290,6 +287,7 @@ function deleteMessage(content) {
 		}
 	}
 }
+
 
 function decryptMessage(content) {
 	var splits = content.split('|-|');
@@ -312,6 +310,7 @@ function decryptMessage(content) {
 		}
 	}
 }
+
 
 function encryptMessage(content) {
 	var splits = content.split('|-|');
