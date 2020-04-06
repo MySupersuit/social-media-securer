@@ -3,7 +3,9 @@
  */
 
 groups = [];
-users = ['Thom','Jonny','Colin','Phil','Ed', 'Yanika', 'YOU'];
+// preprogrammed users to simulate an already populated app
+users = ['Thom','Jonny','Colin','Phil','Ed', 'Yanika', 'YOU'
+			,'Dave','Josh','Ciara','Beth','Bob','Alice'];
 posts = [];
 
 /**
@@ -80,7 +82,7 @@ app.post("/viewgroups", (req, res) => {
 		memberName = req.body.memberdropdown;
 		removeMemberFromGroup(memberName, removeMemberButtonText);
 	}
-	res.render("viewgroups");
+	res.render("viewgroups",{title:"View Groups"});
 });
 
 app.get("/viewgroups", (req, res) => {
@@ -341,6 +343,8 @@ function encryptMessage(content) {
 
 	console.log("encrypting");
 	var group;
+	// find the group the message was posted to
+	// and encrypt using the group's passcode
 	for (let i = 0; i < posts.length; i++) {
 		if (posts[i].content.message == msg
 			&& posts[i].time == time
